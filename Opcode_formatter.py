@@ -5,11 +5,11 @@ import requests
 import streamlit as st
 
 st.set_page_config(page_title="Service JSON → Markdown Formatter", layout="wide")
-st.title("Transportation options, Accepted Payment Methods and Amenities, Services and After Market services Formatter")
+st.title("Prompt formatter")
 
 st.markdown(
-    "Enter the campaign ID and click **Generate Markdown** to retrieve and format "
-    "the dealership configuration."
+    "Transportation options, Accepted Payment Methods and Amenities, "
+    "Services and After Market services Formatter"
 )
 
 campaign_col, _ = st.columns([1, 3])
