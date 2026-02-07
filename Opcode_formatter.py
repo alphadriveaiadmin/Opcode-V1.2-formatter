@@ -140,7 +140,7 @@ def build_services_section(config_obj: dict) -> str:
         else:
             lines.append("Params: None specified.")
 
-        lines.append(f"\nTransportations: {transports_str}\n")
+        lines.append(f"\nAllowed Transportation Options: {transports_str}\n")
         lines.append("---\n")
 
     return "\n".join(lines).rstrip() + "\n"
