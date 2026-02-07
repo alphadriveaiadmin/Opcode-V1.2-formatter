@@ -5,7 +5,7 @@ import requests
 import streamlit as st
 
 st.set_page_config(page_title="Service JSON → Markdown Formatter", layout="wide")
-st.title("Prompt formatter")
+st.title("Prompt Formatter")
 
 st.markdown(
     "Transportation options, Accepted Payment Methods and Amenities, "
