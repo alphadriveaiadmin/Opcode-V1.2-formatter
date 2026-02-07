@@ -1,20 +1,27 @@
 import json
 import textwrap
+
+import requests
 import streamlit as st
 
 st.set_page_config(page_title="Service JSON → Markdown Formatter", layout="wide")
 st.title("Service JSON → Markdown Formatter")
 
 st.markdown(
-    "Paste the raw JSON from the dealership configuration below and click "
-    "**Generate Markdown** to get the formatted list."
+    "Enter the campaign ID and click **Generate Markdown** to retrieve and format "
+    "the dealership configuration."
 )
 
-raw_json = st.text_area(
-    "Raw JSON input",
-    height=300,
-    placeholder="Paste the full JSON array here…",
-)
+campaign_col, _ = st.columns([1, 3])
+with campaign_col:
+    campaign_id = st.text_input(
+        "Campaign ID",
+        max_chars=4,
+        placeholder="1234",
+        help="Enter the 4-digit campaign ID for the webhook.",
+    )
+
+raw_json = ""
 
 def format_transportation_name(name: str) -> str:
     """
@@ -196,13 +203,26 @@ generated_markdown = ""
 error_message = ""
 
 if st.button("Generate Markdown"):
-    if not raw_json.strip():
-        error_message = "Please paste valid JSON before generating."
+    if not campaign_id.strip():
+        error_message = "Please enter a 4-digit campaign ID before generating."
+    elif not campaign_id.isdigit() or len(campaign_id) != 4:
+        error_message = "Campaign ID must be exactly 4 digits."
     else:
         try:
+            response = requests.post(
+                "https://apps.dgaauto.com/virtualAgentData/webhook",
+                params={"campaign_id": campaign_id},
+                timeout=15,
+            )
+            response.raise_for_status()
+            if response.headers.get("content-type", "").lower().startswith("application/json"):
+                raw_json = json.dumps(response.json())
+            else:
+                raw_json = response.text
+
             generated_markdown = build_full_markdown(raw_json)
         except Exception as e:
-            error_message = f"Error while parsing JSON or generating markdown: {e}"
+            error_message = f"Error while retrieving or generating markdown: {e}"
 
 if error_message:
     st.error(error_message)
